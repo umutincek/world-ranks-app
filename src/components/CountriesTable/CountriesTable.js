@@ -5,6 +5,7 @@ import {
 import { useState } from "react";
 import styles from "./CountriesTable.module.css";
 import Link from "next/Link";
+import { Pagination } from "@mui/material";
 
 const orderBy = (countryList, value, direction) => {
   if (direction === "asc") {
@@ -38,9 +39,12 @@ const SortArrow = ({ direction }) => {
   }
 };
 
-const CountriesTable = ({ countryList }) => {
+const CountriesTable = ({ countryList, pageNumber, setPageNumber }) => {
   const [direction, setDirection] = useState();
   const [value, setValue] = useState();
+
+  const perPage = 5;
+  const pageCount = Math.ceil(countryList.length / 10);
 
   const orderedCountries = orderBy(countryList, value, direction);
 
@@ -90,18 +94,38 @@ const CountriesTable = ({ countryList }) => {
         </button>
       </div>
 
-      {orderedCountries.map((country) => (
-        <Link href={`/country/${country.alpha3Code}`} key={country.name}>
-          <div className={styles.row}>
-            <div className={styles.flag}>
-              <img src={country.flag} alt={country.name} />
+      {orderedCountries
+        .slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage)
+        .map((country) => (
+          <Link href={`/country/${country.alpha3Code}`} key={country.name}>
+            <div className={styles.row}>
+              <div className={styles.flag}>
+                <img src={country.flag} alt={country.name} />
+              </div>
+              <div className={styles.name}>{country.name}</div>
+              <div className={styles.population}>{country.population}</div>
+              <div className={styles.area}>{country.area || 0}</div>
             </div>
-            <div className={styles.name}>{country.name}</div>
-            <div className={styles.population}>{country.population}</div>
-            <div className={styles.area}>{country.area || 0}</div>
-          </div>
-        </Link>
-      ))}
+          </Link>
+        ))}
+      <div className={styles.pagination}>
+        <Pagination
+          count={pageCount}
+          page={pageNumber}
+          variant="outlined"
+          shape="rounded"
+          size="large"
+          color="primary"
+          showFirstButton={true}
+          showLastButton={true}
+          style={{
+            background: "#fff",
+            padding: "10px",
+            borderRadius: "4px",
+          }}
+          onChange={(e, page) => setPageNumber(page)}
+        />
+      </div>
     </div>
   );
 };

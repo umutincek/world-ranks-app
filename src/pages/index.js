@@ -6,6 +6,7 @@ import styles from "../styles/Home.module.css";
 
 export default function Home({ countryList }) {
   const [keyword, setKeyword] = useState("");
+  const [pageNumber, setPageNumber] = useState(1);
 
   const filteredCountryList = countryList.filter(
     (country) =>
@@ -18,6 +19,7 @@ export default function Home({ countryList }) {
     e.preventDefault();
 
     setKeyword(e.target.value.toLowerCase());
+    setPageNumber(1);
   };
 
   return (
@@ -33,7 +35,11 @@ export default function Home({ countryList }) {
           />
         </div>
       </div>
-      <CountriesTable countryList={filteredCountryList} />
+      <CountriesTable
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+        countryList={filteredCountryList}
+      />
     </Layout>
   );
 }
